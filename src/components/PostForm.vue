@@ -38,26 +38,9 @@ export default {
 </script>
 
 <style scoped>
-.input {
-    width: 100%;
-    border: 1px solid teal;
-    padding: 10px 15px;
-    margin-top: 15px;
-
-}
 form {
     display: flex;
     flex-direction: column;
-
-}
-
-.createButton {
-    margin-top: 15px;
-    align-self: flex-end;
-    padding: 10px 15px ;
-    background-color: white;
-    color: teal;
-    border: 1px solid teal;
 
 }
 </style>
