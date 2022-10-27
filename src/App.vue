@@ -1,15 +1,27 @@
 <template>
     <div class="app">
         <h1>Страница с постами</h1>
-        <my-button style="margin: 25px 0;" @click="showDialog">
+        <div class="app__btns">
+            <my-button @click="showDialog">
             Новый пост
         </my-button>
+        <my-select
+        v-model="selectedSort"
+        :options="sortOptions"
+        />
+        </div>
+
         <my-dialog v-model:show="dialogVisible">
-            <post-form @create="createPost"/>
+            <post-form
+             @create="createPost"/>
 
         </my-dialog>
         
-        <post-list :posts="posts" @remove ="removePost"/>
+        <post-list
+         :posts="sortedPosts"
+          @remove ="removePost"
+          v-if="!isPostLoading"/>
+        <div class="pB" v-else>Идет загрузка...</div>
        
     </div>
 </template>
@@ -17,18 +29,22 @@
 <script>
 import PostForm from "@/components/PostForm.vue"
 import PostList from "@/components/PostList.vue"
+import axios from 'axios';
+import { timeouts } from "retry";
 export default {
     components: {
         PostForm, PostList
     },
     data(){
         return{
-            posts: [
-            {id: 1, title: 'Орумджек комнатный', body: 'Описание орумджека'},
-            {id: 2, title: 'Орумджек комнатный 2', body: 'Описание орумджека'},
-            {id: 3, title: 'Орумджек комнатный 3', body: 'Описание орумджека'},
-            ],
+            posts: [],
             dialogVisible : false,
+            isPostLoading: false,
+            selectedSort: '',
+            sortOptions: [
+            {value:'title', name: 'По названию'},
+            {value:'body', name: 'По содержимому'},
+            ]
         }
 
     },
@@ -44,11 +60,34 @@ export default {
         },
         showDialog(){
             this.dialogVisible = true;
-        }
-      
-        
+        },
+        async fetchPosts(){
+            try {
+                this.isPostLoading = true;
+                    const response = await axios.get('https://jsonplaceholder.typicode.com/posts?_limit=10');
+                this.posts = response.data;
+                            
+            } catch (e) {
+                alert('ERROR')
+            } finally{
+                this.isPostLoading = false;                  
+            }
+
+        },
+               
     },
-}
+    mounted() {
+            this.fetchPosts();
+        },
+        computed:{
+            sortedPosts(){
+                return [...this.posts].sort( (post1, post2) => {
+                return post1[this.selectedSort]?.localeCompare(post2[this.selectedSort])
+                })
+            },
+        },
+    }
+
 
 </script>
 
@@ -61,4 +100,15 @@ export default {
 .app {
     padding: 20px;
 }
+.pB {
+    text-align: center;
+    margin: 0;
+    padding: 0;
+ }
+ .app__btns {
+    margin: 25px 0;
+    display: flex;
+    justify-content: space-between;
+
+ }
 </style>
