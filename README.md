@@ -1,2 +1,2 @@
-This is my first vue app
+This is my first vue app;
 its about posts 
