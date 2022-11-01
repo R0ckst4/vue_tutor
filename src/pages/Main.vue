@@ -1,18 +1,13 @@
 <template>
-    <div>
-        <h1 class="greetings">Greetings My Friend!</h1>
-
-    </div>
+  <div>
+    <h1 class="greetings">Greetings My Friend!</h1>
+  </div>
 </template>
 <script>
-export default {
-    
-}
+export default {};
 </script>
 <style scoped>
 .greetings {
-    text-align:center;
-    
+  text-align: center;
 }
-    
 </style>
