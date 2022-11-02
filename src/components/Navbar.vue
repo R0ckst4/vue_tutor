@@ -8,6 +8,11 @@
       <my-button @click="$router.push('/about')" style="margin-right: -1px"
         >About</my-button
       >
+      <my-button
+        @click="$router.push('/composition')"
+        style="margin-right: -1px"
+        >CompositionApi</my-button
+      >
       <my-button @click="$router.push('/store')">Store</my-button>
     </div>
   </div>
