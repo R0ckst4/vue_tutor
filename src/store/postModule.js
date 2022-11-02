@@ -1,3 +1,4 @@
+import axios from 'axios';
 export const postModule = {
   state: () => ({
     posts: [],
@@ -14,7 +15,7 @@ export const postModule = {
   }),
   getters: {
     sortedPosts(state) {
-      return [state.posts].sort((post1, post2) => {
+      return [...state.posts].sort((post1, post2) => {
         return post1[state.selectedSort]?.localeCompare(
           post2[state.selectedSort]
         );
@@ -60,13 +61,12 @@ export const postModule = {
           }
         );
         commit(
-          'totalPages'.Math.ceil(
-            response.headers['x-total-count'] / state.limit
-          )
+          'setTotalPages',
+          Math.ceil(response.headers['x-total-count'] / state.limit)
         );
         commit('setPosts', response.data);
       } catch (e) {
-        alert('ERROR');
+        console.log(e);
       } finally {
         commit('setLoading', false);
       }
@@ -84,13 +84,12 @@ export const postModule = {
           }
         );
         commit(
-          'setTotalPages'.Math.ceil(
-            response.headers['x-total-count'] / state.limit
-          )
+          'setTotalPages',
+          Math.ceil(response.headers['x-total-count'] / state.limit)
         );
-        commit('setPosts', [...this.posts, ...response.data]);
+        commit('setPosts', [...state.posts, ...response.data]);
       } catch (e) {
-        alert('ERROR');
+        console.log(e);
       }
     },
   },

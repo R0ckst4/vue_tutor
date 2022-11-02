@@ -1,10 +1,18 @@
 <template>
   <div>
-    <!-- <h1>Posts</h1>
-    <my-input v-model="searchQuery" placeholder="Title search..." />
+    <h1>Posts</h1>
+    <my-input
+      :model-value="searchQuery"
+      @update:model-value="setSearchQuery"
+      placeholder="Title search..."
+    />
     <div class="app__btns">
       <my-button @click="showDialog"> New Post </my-button>
-      <my-select v-model="selectedSort" :options="sortOptions" />
+      <my-select
+        :model-value="selectedSort"
+        @update:model-value="setSelectedSort"
+        :options="sortOptions"
+      />
     </div>
 
     <my-dialog v-model:show="dialogVisible">
@@ -17,7 +25,7 @@
       v-if="!isPostLoading"
     />
     <div class="pB" v-else>Loading...</div>
-    <div v-intersection="loadMorePosts" class="observer"></div> -->
+    <div v-intersection="loadMorePosts" class="observer"></div>
 
     <!-- <div class="page__wrapper">
             <div 
@@ -38,7 +46,7 @@
 import PostForm from '@/components/PostForm.vue';
 import PostList from '@/components/PostList.vue';
 import axios from 'axios';
-import { timeouts } from 'retry';
+import { mapState, mapGetters, mapActions, mapMutations } from 'vuex';
 export default {
   components: {
     PostForm,
@@ -46,21 +54,19 @@ export default {
   },
   data() {
     return {
-      posts: [],
       dialogVisible: false,
-      isPostLoading: false,
-      selectedSort: '',
-      searchQuery: '',
-      page: 1,
-      limit: 10,
-      totalPages: 0,
-      sortOptions: [
-        { value: 'title', name: 'Titles' },
-        { value: 'body', name: 'Describtion' },
-      ],
     };
   },
   methods: {
+    ...mapMutations({
+      setPage: 'post/setPage',
+      setSearchQuery: 'post/setSearchQuery',
+      setSelectedSort: 'post/setSelectedSort',
+    }),
+    ...mapActions({
+      loadMorePosts: 'post/loadMorePosts',
+      fetchPosts: 'post/fetchPosts',
+    }),
     createPost(post) {
       this.posts.push(post);
       this.dialogVisible = false;
@@ -71,17 +77,27 @@ export default {
     showDialog() {
       this.dialogVisible = true;
     },
-    // changePage(pageNum){
-    //     this.page = pageNum;
-
-    // },
   },
   mounted() {
-    // this.fetchPosts();
-    // this.$refs.observer;
+    this.fetchPosts();
   },
 
-  computed: {},
+  computed: {
+    ...mapState({
+      posts: (state) => state.post.posts,
+      isPostLoading: (state) => state.post.isPostLoading,
+      selectedSort: (state) => state.post.selectedSort,
+      searchQuery: (state) => state.post.searchQuery,
+      page: (state) => state.post.page,
+      limit: (state) => state.post.limit,
+      totalPages: (state) => state.post.totalPages,
+      sortOptions: (state) => state.post.sortOptions,
+    }),
+    ...mapGetters({
+      sortedPosts: 'post/sortedPosts',
+      sortedAndSearchedPost: 'post/sortedAndSearchedPost',
+    }),
+  },
   watch: {
     // page() {
     //     this.fetchPosts()
